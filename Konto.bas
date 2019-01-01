@@ -25,8 +25,6 @@ Sub KontoErstellen()
     SumLine = False          'Wenn die Summen-Zeile nicht benötigt wird das True zu einem False ändern!
     
     If TypeName(Selection) = "Range" Then
-        MsgBox Selection.Address & " item(s) selected"
-        
         If Selection.Areas.count = 1 Then
             Dim height, restHeight As Integer
             Dim startX As Integer, startY As Integer
