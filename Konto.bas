@@ -21,8 +21,8 @@ Sub KontoErstellen()
 '
     Dim SumLine As Boolean
     Dim header() As KontoLabel
-    header = Labels(True)   'Wenn Erfolg nicht benÃ¶tigt dann True zu False
-    SumLine = False          'Wenn die Summen-Zeile nicht benÃ¶tigt wird das True zu einem False Ã¤ndern!
+    header = Labels(True)   'Wenn Erfolg nicht benötigt dann True zu False
+    SumLine = False          'Wenn die Summen-Zeile nicht benötigt wird das True zu einem False ändern!
     
     If TypeName(Selection) = "Range" Then
         If Selection.Areas.count = 1 Then
@@ -98,19 +98,17 @@ Sub KontoErstellen()
     End If
 End Sub
 Public Function Labels(Erfolg As Boolean) As KontoLabel()
-    Dim Length As Integer
-    If Erfolg Then
-        Length = 4
+    Dim labs() As KontoLabel
+    If Not Erfolg Then
+        ReDim labs(0 To 3)
     Else
-        Length = 3
+        ReDim labs(0 To 4)
     End If
     
-    Dim labs(0 To 4) As KontoLabel
     labs(0) = DatumLabel()
     labs(1) = TextLabel()
     labs(2) = SollLabel()
     labs(3) = HabenLabel()
-    
     If Erfolg Then labs(4) = ErfolgLabel()
     
     Labels = labs
@@ -240,3 +238,4 @@ Public Function ApplyBorderHeader()
     End With
     Selection.Borders(xlInsideHorizontal).LineStyle = xlNone
 End Function
+
