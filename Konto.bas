@@ -1,10 +1,9 @@
 Attribute VB_Name = "Konto"
 'Protected under "MIT License"
-'
 'Copyright (c) 2019 Rafael Orman
 '
-'
 'You will find the full license on the github repo. "https://raw.githubusercontent.com/Kronos9247/BWM-Makros/master/LICENSE"
+'
 
 Public Type KontoLabel
         Label As String
@@ -21,8 +20,8 @@ Sub KontoErstellen()
 '
     Dim SumLine As Boolean
     Dim header() As KontoLabel
-    header = Labels(True)   'Wenn Erfolg nicht benötigt dann True zu False
-    SumLine = False          'Wenn die Summen-Zeile nicht benötigt wird das True zu einem False ändern!
+    header = Labels(True)   'Wenn Erfolg nicht benÃ¶tigt dann True zu False
+    SumLine = False          'Wenn die Summen-Zeile nicht benÃ¶tigt wird das True zu einem False Ã¤ndern!
     
     If TypeName(Selection) = "Range" Then
         If Selection.Areas.count = 1 Then
