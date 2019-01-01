@@ -9,3 +9,5 @@ If you dont know how to import files in the editor just press `CTRL+M` it automa
 
 ## How to use
 After installing the right macro you can press `ALT+F8` and execute the macro of choice.
+
+![Example Img](https://raw.githubusercontent.com/Kronos9247/BWM-Makros/master/readme/kontoerstellen.gif)
