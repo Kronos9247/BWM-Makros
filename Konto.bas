@@ -21,8 +21,8 @@ Sub KontoErstellen()
 '
     Dim SumLine As Boolean
     Dim header() As KontoLabel
-    header = Labels(False)   'Wenn Erfolg nicht benötigt dann True zu False
-    SumLine = False          'Wenn die Summen-Zeile nicht benötigt wird das True zu einem False ändern!
+    header = Labels(True)   'Wenn Erfolg nicht benÃ¶tigt dann True zu False
+    SumLine = False          'Wenn die Summen-Zeile nicht benÃ¶tigt wird das True zu einem False Ã¤ndern!
     
     If TypeName(Selection) = "Range" Then
         MsgBox Selection.Address & " item(s) selected"
