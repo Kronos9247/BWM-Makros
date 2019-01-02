@@ -86,14 +86,14 @@ Sub KontoErstellen()
                 SelectRange startX, startY, endX, endY
             Else
                 If SumLine Then
-                    MsgBox "[BWM-Konto] Min height is 2!"
+                    MsgBox "[BWM-Macro] Min height is 2!"
                 Else
-                    MsgBox "[BWM-Konto] Min height is 1!"
+                    MsgBox "[BWM-Macro] Min height is 1!"
                 End If
             End If
         End If
     Else
-        MsgBox "[BWM-Konto] Nothing selected!"
+        MsgBox "[BWM-Macro] Nothing selected!"
     End If
 End Sub
 Public Function Labels(Erfolg As Boolean) As KontoLabel()
