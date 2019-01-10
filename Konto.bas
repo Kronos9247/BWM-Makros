@@ -55,8 +55,6 @@ Attribute KontoErstellen.VB_ProcData.VB_Invoke_Func = "M\n14"
             
             restHeight = height - 1
             
-            MsgBox height
-            
             If (SumLine And height >= 2) Or (Not SumLine And height >= 1) Then
                 Dim offsetX, offsetY As Integer
                 Dim curCells As Range
