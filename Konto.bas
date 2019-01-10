@@ -1,18 +1,39 @@
 Attribute VB_Name = "Konto"
 'Protected under "MIT License"
+'
 'Copyright (c) 2019 Rafael Orman
 '
-'You will find the full license on the github repo. "https://raw.githubusercontent.com/Kronos9247/BWM-Makros/master/LICENSE"
 '
+'You will find the full license on the github repo. "https://raw.githubusercontent.com/Kronos9247/BWM-Makros/master/LICENSE"
+
+
+Const ErfolgL As Boolean = True 'Wenn Erfolg nicht benötigt dann True zu False
+Const SumL As Boolean = False   'Wenn die Summen-Zeile nicht benötigt wird das True zu einem False ändern!
+
+
+'Undo Code
+Type SaveRange
+    Val As Variant
+    Addr As String
+    Format As String
+    Borders As Borders
+End Type
+
+Option Explicit
+Public OldWorkbook As Workbook
+Public OldSheet As Worksheet
+Public OldSelection() As SaveRange
+
 
 Public Type KontoLabel
-        Label As String
-        NumberFormat As String
-        Width As Double
-        
-        Sum As Boolean
+    Label As String
+    NumberFormat As String
+    Width As Double
+    
+    Sum As Boolean
 End Type
 Sub KontoErstellen()
+Attribute KontoErstellen.VB_ProcData.VB_Invoke_Func = "M\n14"
 '
 ' KontoErstellen Makro
 '
@@ -20,19 +41,21 @@ Sub KontoErstellen()
 '
     Dim SumLine As Boolean
     Dim header() As KontoLabel
-    header = Labels(True)   'Wenn Erfolg nicht benÃ¶tigt dann True zu False
-    SumLine = False          'Wenn die Summen-Zeile nicht benÃ¶tigt wird das True zu einem False Ã¤ndern!
+    header = Labels(ErfolgL)
+    SumLine = SumL
     
     If TypeName(Selection) = "Range" Then
-        If Selection.Areas.count = 1 Then
+        If Selection.Areas.Count = 1 Then
             Dim height, restHeight As Integer
             Dim startX As Integer, startY As Integer
             
-            height = Selection.Rows.count
+            height = Selection.Rows.Count
             startX = Selection.Column
             startY = Selection.Row
             
             restHeight = height - 1
+            
+            MsgBox height
             
             If (SumLine And height >= 2) Or (Not SumLine And height >= 1) Then
                 Dim offsetX, offsetY As Integer
@@ -40,6 +63,15 @@ Sub KontoErstellen()
                 Dim Item As KontoLabel
                 
                 
+                Dim endX As Integer, endY As Integer
+                endX = startX + (UBound(header) - LBound(header))
+                endY = startY + height - 1
+                
+                'Select everything
+                SelectRange startX, startY, endX, endY
+                AddUndo
+                
+                Dim j As Integer, i As Integer
                 For i = LBound(header) To UBound(header)
                     offsetX = startX + i
                     Set curCells = ActiveSheet.Cells(startY, offsetX)
@@ -61,11 +93,6 @@ Sub KontoErstellen()
                     End If
                 Next
                 
-                
-                Dim endX As Integer, endY As Integer
-                endX = startX + (UBound(header) - LBound(header))
-                endY = startY + height - 1
-                
                 'Border Thin
                 SelectRange startX, startY, endX, endY
                 ApplyBorderThin
@@ -84,16 +111,19 @@ Sub KontoErstellen()
                 
                 'Select everything
                 SelectRange startX, startY, endX, endY
+                
+                'Apply undo for everything
+                Application.OnUndo "Undo Macro - Konto", "KontoEntfernen"
             Else
                 If SumLine Then
-                    MsgBox "[BWM-Macro] Min height is 2!"
+                    MsgBox "[BWM-Konto] Min height is 2!"
                 Else
-                    MsgBox "[BWM-Macro] Min height is 1!"
+                    MsgBox "[BWM-Konto] Min height is 1!"
                 End If
             End If
         End If
     Else
-        MsgBox "[BWM-Macro] Nothing selected!"
+        MsgBox "[BWM-Konto] Nothing selected!"
     End If
 End Sub
 Public Function Labels(Erfolg As Boolean) As KontoLabel()
@@ -163,8 +193,6 @@ Public Function SelectRange(startX As Integer, startY As Integer, endX As Intege
     End With
 End Function
 Public Function ApplyBorderThin()
-    Selection.Borders(xlDiagonalDown).LineStyle = xlNone
-    Selection.Borders(xlDiagonalUp).LineStyle = xlNone
     With Selection.Borders(xlEdgeLeft)
         .LineStyle = xlContinuous
         .ColorIndex = 0
@@ -203,8 +231,6 @@ Public Function ApplyBorderThin()
     End With
 End Function
 Public Function ApplyBorderHeader()
-    Selection.Borders(xlDiagonalDown).LineStyle = xlNone
-    Selection.Borders(xlDiagonalUp).LineStyle = xlNone
     With Selection.Borders(xlEdgeLeft)
         .LineStyle = xlContinuous
         .ColorIndex = 0
@@ -237,4 +263,66 @@ Public Function ApplyBorderHeader()
     End With
     Selection.Borders(xlInsideHorizontal).LineStyle = xlNone
 End Function
+
+Private Function AddUndo()
+    ReDim OldSelection(Selection.Count)
+    Set OldWorkbook = ActiveWorkbook
+    Set OldSheet = ActiveSheet
+    
+    Dim i As Integer, Cell As Range, Edge As Variant
+    i = 0
+    For Each Cell In Selection
+        i = i + 1
+        OldSelection(i).Addr = Cell.Address
+        OldSelection(i).Val = Cell.Formula
+        OldSelection(i).Format = Cell.NumberFormat
+        
+        
+        Set OldSelection(i).Borders = Cell.Borders
+    Next Cell
+End Function
+Private Sub KontoEntfernen()
+    OldWorkbook.Activate
+    OldSheet.Activate
+    
+    Dim i As Integer, Cell As Range
+    For i = 1 To UBound(OldSelection)
+        Set Cell = Range(OldSelection(i).Addr)
+        
+        Cell.Formula = OldSelection(i).Val
+        Cell.NumberFormat = OldSelection(i).Format
+        
+        Dim Edge As Integer, OldBorder As Borders
+        If Not OldSelection(i).Borders Is Nothing Then
+            Set OldBorder = OldSelection(i).Borders
+            
+            For Edge = XlBordersIndex.xlDiagonalDown To XlBordersIndex.xlInsideHorizontal
+                If Not OldBorder(Edge) Is Nothing Then
+                    If Not OldBorder(Edge).LineStyle = 1 Then
+                        If OldBorder(Edge).LineStyle = xlNone Then
+                            Cell.Borders(Edge).LineStyle = OldBorder(Edge).LineStyle
+                        Else
+                            With Cell.Borders(Edge)
+                                .LineStyle = OldBorder(Edge).LineStyle
+                                .ColorIndex = OldBorder(Edge).ColorIndex
+                                .TintAndShade = OldBorder(Edge).TintAndShade
+                                .Weight = OldBorder(Edge).Weight
+                            End With
+                        End If
+                    Else
+                        With Cell.Borders(Edge)
+                            .LineStyle = xlNone
+                        End With
+                    End If
+                Else
+                    With Cell.Borders(Edge)
+                        .LineStyle = xlNone
+                    End With
+                End If
+            Next Edge
+        End If
+    Next i
+    
+    Exit Sub
+End Sub
 
