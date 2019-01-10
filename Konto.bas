@@ -7,8 +7,8 @@ Attribute VB_Name = "Konto"
 'You will find the full license on the github repo. "https://raw.githubusercontent.com/Kronos9247/BWM-Makros/master/LICENSE"
 
 
-Const ErfolgL As Boolean = True 'Wenn Erfolg nicht benötigt dann True zu False
-Const SumL As Boolean = False   'Wenn die Summen-Zeile nicht benötigt wird das True zu einem False ändern!
+Const ErfolgL As Boolean = True 'Wenn Erfolg nicht benÃ¶tigt dann True zu False
+Const SumL As Boolean = False   'Wenn die Summen-Zeile nicht benÃ¶tigt wird das True zu einem False Ã¤ndern!
 
 
 'Undo Code
@@ -37,7 +37,7 @@ Attribute KontoErstellen.VB_ProcData.VB_Invoke_Func = "M\n14"
 '
 ' KontoErstellen Makro
 '
-' Tastenkombination: Strg+Umschalt+N
+' Tastenkombination: Strg+Umschalt+M
 '
     Dim SumLine As Boolean
     Dim header() As KontoLabel
